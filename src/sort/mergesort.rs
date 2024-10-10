@@ -1,0 +1,73 @@
+use crate::sort::Sorter;
+use std::ptr;
+
+pub struct MergeSort;
+impl Sorter for MergeSort {
+    fn sort<T: Ord + Clone>(slice: &mut [T]) {
+        let mut cloned = slice.to_vec();
+        mergesort(&mut cloned, slice);
+    }
+}
+
+fn merge<'a, 'b, T: Ord + Clone>(left: &'a [T], right: &'a [T], out: &'b mut [T]) {
+    // merge left and right into out
+    // by taking on by one from left and right
+    // and chosing smaller, so that out is sorted
+    assert_eq!(left.len() + right.len(), out.len());
+    let mut left_iter = left.iter().peekable();
+    let mut right_iter = right.iter().peekable();
+    let mut out_iter = out.iter_mut();
+    loop {
+        match (left_iter.peek(), right_iter.peek()) {
+            (None, None) => break,
+            (None, Some(..)) => {
+                *out_iter.next().expect("invalid out") = right_iter.next().unwrap().clone();
+            }
+            (Some(..), None) => {
+                *out_iter.next().expect("invalid out") = left_iter.next().unwrap().clone();
+            }
+            (Some(&l), Some(&r)) => {
+                // take smaller, so that
+                if l <= r {
+                    *out_iter.next().expect("invalid out") = left_iter.next().unwrap().clone();
+                } else {
+                    *out_iter.next().expect("invalid out") = right_iter.next().unwrap().clone();
+                }
+            }
+        }
+    }
+}
+
+fn mergesort<T: Ord + Clone>(slice_in: &mut [T], slice_out: &mut [T]) {
+    if slice_in.len() <= 1 {
+        return;
+    }
+
+    // split into binary tree
+    let mid = slice_in.len() / 2;
+    let (left_in, right_in) = slice_in.split_at_mut(mid);
+    let (left_out, right_out) = slice_out.split_at_mut(mid);
+
+    mergesort(left_in, left_out);
+    mergesort(right_in, right_out);
+    unsafe {
+        if left_out.len() > 1 {
+            ptr::copy_nonoverlapping(left_out.as_ptr(), left_in.as_mut_ptr(), left_out.len());
+        }
+        if right_out.len() > 1 {
+            ptr::copy_nonoverlapping(right_out.as_ptr(), right_in.as_mut_ptr(), right_out.len());
+        }
+    }
+    merge(left_in, right_in, slice_out);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::sort::tests::works_for_sorter;
+
+    #[test]
+    fn mergesort_works() {
+        works_for_sorter::<MergeSort>();
+    }
+}
