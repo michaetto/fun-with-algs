@@ -4,16 +4,17 @@ pub mod insertionsort;
 pub mod mergesort;
 pub mod quicksort;
 pub mod selectionsort;
+use std::fmt::Debug;
 
-pub trait Sorter {
-    fn sort<T: Ord + Clone>(slice: &mut [T]);
+trait Sorter {
+    fn sort<T: Ord + Debug + Clone>(slice: &mut [T]);
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    pub(crate) fn works_for_sorter<S>()
+    pub(crate) fn test_sorting<S>()
     where
         S: Sorter,
     {
@@ -58,7 +59,7 @@ mod tests {
     }
 
     #[test]
-    fn std_works() {
-        works_for_sorter::<StdSorter>();
+    fn test_std() {
+        test_sorting::<StdSorter>();
     }
 }

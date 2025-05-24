@@ -4,9 +4,9 @@ use crate::data::graph::GraphNodeIndex;
 /// - i increase from top to bottom
 /// - j increses from left to right
 /// - An example:
-///     {i:0,j:0}, {i:0,j:1}, {i:0,j:2}
-///     {i:1,j:0}, {i:1,j:1}, {i:1,j:2}
-///     {i:2,j:0}, {i:2,j:1}, {i:2,j:2}
+///   {i:0,j:0}, {i:0,j:1}, {i:0,j:2}
+///   {i:1,j:0}, {i:1,j:1}, {i:1,j:2}
+///   {i:2,j:0}, {i:2,j:1}, {i:2,j:2}
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Position {
     pub i: usize,
@@ -101,7 +101,7 @@ fn construct_test_maze_as_graph() -> Graph<Position, ()> {
             // node is Some only if it is '0', i.e. part of path
             // node is None if it is a wall
             let node_position = Position::new(i, j);
-            let node_index: GraphNodeIndex = graph.nodes.len();
+            let node_index: GraphNodeIndex = graph.nodes.len(); // This is equivalent to node_position.index(width), due to the order of looping over indexes 'i' and 'j' and the fact that we also add disconnected nodes
             debug_assert!(node_index < 64, "node_position: {node_position:?}");
             graph.nodes.push(node_position);
             graph.edges.push(Vec::new());
@@ -145,8 +145,9 @@ fn construct_test_maze_as_graph() -> Graph<Position, ()> {
 
 #[cfg(test)]
 mod tests {
+    use crate::search::bfs::bfs_shortest_path_in_indexed_graph;
+
     use super::*;
-    use crate::search::bfs::bfs_shortest_path_for_unweighted_graph;
 
     // Maze:
     //        10100010<-end
@@ -171,7 +172,7 @@ mod tests {
             end_position,
             Position::from_index(end_position.index(maze_width), maze_width)
         );
-        let found_path = bfs_shortest_path_for_unweighted_graph(
+        let found_path = bfs_shortest_path_in_indexed_graph(
             &maze,
             start_position.index(maze_width),
             end_position.index(maze_width),

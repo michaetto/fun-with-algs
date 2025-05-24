@@ -72,20 +72,24 @@ fn quicksort<T: Ord + Clone>(slice: &mut [T]) {
                         // - and pivot is NOT '<' then pivot itself
         } else {
             // here: slice[right] <= pivot < slice[left]
-
             // move elements to the correct side:
             slice.swap(left, right);
-            // after swap: slice[left] <= pivot < slice[right]
+
+            // after the swap we have slice[left] <= slice[0] < slice[right]
 
             left += 1; // number of elements on left (correct) side increases
             right -= 1; // number of elements on right (correct) side increases
                         // this subtraction will not overflow usize, the same reason as above
         }
     }
-    // after the loop indexes 1..left (i.e. 1..=(left-1)) has something <= pivot and pivot is slice[0]
-    // put pivot at the end of left side:
-    slice.swap(0, left - 1); // now pivot is already on right/sorted place as well
 
+    // 1..left (1..=(left-1)) is >= pivot
+    // right..(slice.len()-1) < pivot
+    slice.swap(0, left - 1);
+
+    // left_side and right_side are like:
+    // - every element in left_side is <= pivot
+    // - every element in right_side is > pivot
     let (left_side, right_side) = slice.split_at_mut(left - 1); // after this right_side has pivot as first element
     assert!(left_side.last() <= right_side.first());
     // recursive over left side
@@ -94,40 +98,35 @@ fn quicksort<T: Ord + Clone>(slice: &mut [T]) {
     quicksort(&mut right_side[1..]);
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::sort::tests::works_for_sorter;
+#[test]
+fn test_quick_sort() {
+    use crate::sort::tests::test_sorting;
+    test_sorting::<QuickSort>();
+}
 
-    #[test]
-    fn quicksort_works() {
-        works_for_sorter::<QuickSort>();
-    }
+#[test]
+fn put_pivot_works() {
+    let mut things = [1, 2, 3];
+    put_pivot_at_first(&mut things);
+    assert_eq!(things[0], 2);
 
-    #[test]
-    fn put_pivot_works() {
-        let mut things = [1, 2, 3];
-        put_pivot_at_first(&mut things);
-        assert_eq!(things[0], 2);
+    let mut things = [3, 1, 2];
+    put_pivot_at_first(&mut things);
+    assert_eq!(things[0], 2);
 
-        let mut things = [3, 1, 2];
-        put_pivot_at_first(&mut things);
-        assert_eq!(things[0], 2);
+    let mut things = [2, 3, 1];
+    put_pivot_at_first(&mut things);
+    assert_eq!(things[0], 2);
 
-        let mut things = [2, 3, 1];
-        put_pivot_at_first(&mut things);
-        assert_eq!(things[0], 2);
+    let mut things = [3, 2, 1];
+    put_pivot_at_first(&mut things);
+    assert_eq!(things[0], 2);
 
-        let mut things = [3, 2, 1];
-        put_pivot_at_first(&mut things);
-        assert_eq!(things[0], 2);
+    let mut things = [1, 3, 2];
+    put_pivot_at_first(&mut things);
+    assert_eq!(things[0], 2);
 
-        let mut things = [1, 3, 2];
-        put_pivot_at_first(&mut things);
-        assert_eq!(things[0], 2);
-
-        let mut things = [2, 1, 3];
-        put_pivot_at_first(&mut things);
-        assert_eq!(things[0], 2);
-    }
+    let mut things = [2, 1, 3];
+    put_pivot_at_first(&mut things);
+    assert_eq!(things[0], 2);
 }

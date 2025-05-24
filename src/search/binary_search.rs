@@ -26,19 +26,14 @@ pub fn binary_search<T: Ord>(sorted: &[T], el: &T) -> Result<usize, usize> {
     Err(left)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn binary_search_works() {
-        let a = [1, 2, 40, 61, 121, 333, 335, 380];
-        assert_eq!(Err(2), binary_search(&a, &4));
-        assert_eq!(Ok(1), binary_search(&a, &2));
-        assert_eq!(Ok(4), binary_search(&a, &121));
-        assert_eq!(Ok(0), binary_search(&a, &1));
-        assert_eq!(Ok(7), binary_search(&a, &380));
-        assert_eq!(Ok(6), binary_search(&a, &335));
-        assert_eq!(Err(8), binary_search(&a, &400));
-    }
+#[test]
+fn binary_search_works() {
+    let a = [1, 2, 40, 61, 121, 333, 335, 380];
+    assert_eq!(Err(2), binary_search(&a, &4));
+    assert_eq!(Ok(1), binary_search(&a, &2));
+    assert_eq!(Ok(4), binary_search(&a, &121));
+    assert_eq!(Ok(0), binary_search(&a, &1));
+    assert_eq!(Ok(7), binary_search(&a, &380));
+    assert_eq!(Ok(6), binary_search(&a, &335));
+    assert_eq!(Err(8), binary_search(&a, &400));
 }

@@ -50,23 +50,20 @@ impl Sorter for InsertionSortWithCustomBinarySearch {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::sort::tests::works_for_sorter;
+#[test]
+fn insertion_with_individual_swaps_works() {
+    use crate::sort::tests::test_sorting;
+    test_sorting::<InsertionSortWithIndividualSwaps>();
+}
 
-    #[test]
-    fn insertion_with_individual_swaps_works() {
-        works_for_sorter::<InsertionSortWithIndividualSwaps>();
-    }
+#[test]
+fn insertion_with_std_partition_point_and_rotation_works() {
+    use crate::sort::tests::test_sorting;
+    test_sorting::<InsertionSortWithStdPartitionPointAndRotation>();
+}
 
-    #[test]
-    fn insertion_with_std_partition_point_and_rotation_works() {
-        works_for_sorter::<InsertionSortWithStdPartitionPointAndRotation>();
-    }
-
-    #[test]
-    fn insertion_with_custom_binary_search_works() {
-        works_for_sorter::<InsertionSortWithCustomBinarySearch>();
-    }
+#[test]
+fn insertion_with_custom_binary_search_works() {
+    use crate::sort::tests::test_sorting;
+    test_sorting::<InsertionSortWithCustomBinarySearch>();
 }

@@ -4,12 +4,15 @@ use std::ptr;
 pub struct MergeSort;
 impl Sorter for MergeSort {
     fn sort<T: Ord + Clone>(slice: &mut [T]) {
+        // 1. recursively split in half (top-down in tree)
+        // 2. then merge each one (bottom-up) by preserving order
+        // - (so that created new nodes are sorted)
         let mut cloned = slice.to_vec();
         mergesort(&mut cloned, slice);
     }
 }
 
-fn merge<'a, 'b, T: Ord + Clone>(left: &'a [T], right: &'a [T], out: &'b mut [T]) {
+fn merge<'a, T: Ord + Clone>(left: &'a [T], right: &'a [T], out: &mut [T]) {
     // merge left and right into out
     // by taking on by one from left and right
     // and chosing smaller, so that out is sorted
@@ -61,13 +64,8 @@ fn mergesort<T: Ord + Clone>(slice_in: &mut [T], slice_out: &mut [T]) {
     merge(left_in, right_in, slice_out);
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::sort::tests::works_for_sorter;
-
-    #[test]
-    fn mergesort_works() {
-        works_for_sorter::<MergeSort>();
-    }
+#[test]
+fn test_selection_sort() {
+    use crate::sort::tests::test_sorting;
+    test_sorting::<MergeSort>();
 }

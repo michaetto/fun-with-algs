@@ -17,9 +17,7 @@ impl<T: Clone> Node<T> for NodeTree<T> {
     }
 
     fn right(&self) -> Option<&impl Node<T>> {
-        self.right
-            .as_ref()
-            .map(|right: &Box<NodeTree<T>>| right.as_ref())
+        self.right.as_ref().map(|right| right.as_ref())
     }
 
     fn value(&self) -> &T {
